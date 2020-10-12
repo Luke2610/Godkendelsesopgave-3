@@ -5,25 +5,28 @@ class user{
 
 
 // everything under this line is Express to make the server run
-// this line allows us to use the expressjs module
 var express = require("express");
-
-// Add this line so we can serve files from our local
-// directory
-var path = require("path");
 var app = express();
+const jwt = require('jsonwebtoken');
+const fs = require('fs')
 
-// Add the abillity to serve our static files from the public directory
-app.use(express.static("public"));
+app.get('/secret', (req,res) => {
+    res.json({"message":"This is super secret, do not share!"})
+})
 
-// Here we serve up our index page
-app.get("/", function(req, res) {
-  res.sendFile(path.join(__dirname + "/public/index.html"));
-});
+app.get('/readme', (req,res) => {
+    res.json({"message": "This is open to the world!"})
+})
+
+app.get('/jwt',(req,res) => {
+    let privateKey = fs.readFileSync('./private.pem','utf8');
+    let token = jwt.sign({"body": "stuff"}, "MySuperSecretPassPhrase",{algorithm: 'HS256'});
+    res.send(token);
+})
 
 var server = app.listen(3000, function() {
   var host = server.address().address;
   var port = server.address().port;
 
-  console.log("GadgetEdge.net listening at http://%s:%s", host, port);
+  console.log("Express app listening at localhost", host, port);
 });
