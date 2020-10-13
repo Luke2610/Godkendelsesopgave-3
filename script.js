@@ -37,6 +37,7 @@ var express = require("express");
 var app = express();
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const bodyParser = require('body-parser')
 const { stringify } = require("querystring");
 
 app.get('/secret', isAuthorized, (req,res) => {
@@ -51,12 +52,15 @@ app.get('/jwt',(req,res) => {
     let token = jwt.sign({"body": "stuff"}, privateKey ,{algorithm: 'HS256'});
     res.send(token);
 })
+app.get('/', (req,res) => {
+    res.sendFile(__dirname + "/index.html");
+})
 
 //CRUD-Endpoints for User, Interest & Match.
-
+app.use(bodyParser.urlencoded({ extended: true}))
 //User-endpoint
-app.get('/user', (req,res) => {
-    res.json(kasper);
+app.post('/user', (req,res) => {
+    console.log(req.body)
 })
 
 //Interest-endpoint
