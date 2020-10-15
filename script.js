@@ -20,14 +20,13 @@ class paymentUser extends user{
 
 // class freeUser with inheritance from class user
 class freeUser extends user{
-        constructor(firstName,lastName,age,gender,interest,match,image, creditCard) {
-            super(firstName,lastName,age,gender,interest,match,image)
-            this.creditCard = creditCard;
+    constructor(firstName,lastName,age,gender,interest,match,image, creditCard) {
+        super(firstName,lastName,age,gender,interest,match,image)
+        this.creditCard = creditCard;
     }
 }
 
 // the users
-
 var kasper = new paymentUser("Kasper","Jakobsen","21","male",["Gaming","Food","Scout"],22, true,true);
 console.log(kasper)
 
@@ -46,12 +45,18 @@ app.get('/secret', isAuthorized, (req,res) => {
     res.json({"message":"This is super secret, do not share!"})
 })
 
+username = "username"; password = "password" // the most secure login :)
+if (username == "username" && password == "password"){
 app.get('/jwt',(req,res) => {
     let privateKey = fs.readFileSync('./private.pem','utf8');
     let token = jwt.sign({"Authorization": "Authorized"}, privateKey ,{algorithm: 'HS256'});
     res.send(token);
 })
-
+} else {
+    app.get('/jwt',(req,res) =>{
+        res.send("Access Denied")
+    })
+}
 //CRUD-Endpoints for User, Interest & Match.
 
 //User-endpoint
@@ -78,6 +83,7 @@ app.delete('/user',(req,res) => {
     users.splice(1,1);
     res.status(204).json(eva);
 });
+
 //Interest-endpoint
 // read
 app.get('/interest', (req,res) => {
@@ -105,22 +111,26 @@ app.delete('/interest', (req,res) => {
 })
 
 //Match-endpoint
+// read
 app.get('/match', isAuthorized, (req,res) => { // to see matches you have to be authorized
     res.send("Kaspers number of matches: " + kasper.match);
 })
 
+// create
 app.post('/match', isAuthorized, (req,res) => {
     newMatches = 32; // new number of matches
     kasper.match = newMatches;
     res.status(201).json(newMatches);
 });
 
+// update
 app.put('/match', isAuthorized, function (req, res) {
     newMatches = 12; // new matches
     kasper.match = kasper.match + newMatches; //current matches + new matches
     res.sendStatus(204);
 });
 
+// delete
 app.delete('/match', isAuthorized, (req,res) => {
     kasper.match = 0;
     res.sendStatus(204);
