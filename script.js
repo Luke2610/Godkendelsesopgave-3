@@ -27,13 +27,14 @@ class freeUser extends user{
 }
 
 // the users
+
 var kasper = new paymentUser("Kasper","Jakobsen","21","male",["Gaming","Food","Scout"],22, true,true);
 console.log(kasper)
 
-var eva = new freeUser("Eva","Hansen","20","female", ["Communism","Fishing",""],3,true,false)
+var eva = new freeUser("Eva","Hansen","20","female", ["Communism","Fishing","Diving"],3,true,false)
 console.log(eva)
 
-
+var users = [kasper]
 
 // everything under this line is the server stuff
 var express = require("express");
@@ -54,53 +55,73 @@ app.get('/jwt',(req,res) => {
 //CRUD-Endpoints for User, Interest & Match.
 
 //User-endpoint
+// read
 app.get('/user', (req,res) => {
-    res.status(200).json(kasper)
-    console.log(req.body) //logging the forms from the HTML
-})
+    res.status(200).json(users)
+});
 
+// create
+app.post('/user', (req,res) => {
+    users.push(eva);
+    res.status(201).json(eva);
+});
+
+// update
+app.put('/user', (req,res) => {
+    eva.firstName = "Susanne"
+    eva.image = true;
+    res.status(204).json(eva)
+});
+
+// delete
+app.delete('/user',(req,res) => {
+    users.splice(1,1);
+    res.status(204).json(eva);
+});
 //Interest-endpoint
-// Read
+// read
 app.get('/interest', (req,res) => {
     res.send("Kaspers interests are: " + kasper.interest);
 });
 
-// create new interest for user (I use Postman to do the post request)
+// create
 app.post('/interest', (req,res) => {
     newInterest = "Running";
     kasper.interest.push(newInterest);
     res.status(201).json(newInterest);
 });
 
+// update
 app.put('/interest', function (req, res) {
     updatedInterest = "Jumping";
     kasper.interest.splice(3,1,updatedInterest)
     res.sendStatus(204)
 });
 
+// delete
 app.delete('/interest', (req,res) => {
     kasper.interest.splice(2,1)
     res.sendStatus(204);
 })
 
 //Match-endpoint
-app.get('/match', (req,res) => {
+app.get('/match', isAuthorized, (req,res) => { // to see matches you have to be authorized
     res.send("Kaspers number of matches: " + kasper.match);
 })
 
-app.post('/match', (req,res) => {
+app.post('/match', isAuthorized, (req,res) => {
     newMatches = 32; // new number of matches
     kasper.match = newMatches;
     res.status(201).json(newMatches);
 });
 
-app.put('/match', function (req, res) {
+app.put('/match', isAuthorized, function (req, res) {
     newMatches = 12; // new matches
     kasper.match = kasper.match + newMatches; //current matches + new matches
     res.sendStatus(204);
 });
 
-app.delete('/match', (req,res) => {
+app.delete('/match', isAuthorized, (req,res) => {
     kasper.match = 0;
     res.sendStatus(204);
 })
