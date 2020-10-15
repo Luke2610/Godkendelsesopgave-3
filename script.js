@@ -72,7 +72,7 @@ app.put('/user', (req,res) => {
 });
 
 // delete
-app.delete('/user',(req,res) => {
+app.delete('/user',isAuthorized,(req,res) => {
     users.splice(1,1);
     res.status(204).json(eva);
 });
@@ -98,7 +98,7 @@ app.put('/interest', function (req, res) {
 });
 
 // delete
-app.delete('/interest', (req,res) => {
+app.delete('/interest',isAuthorized, (req,res) => {
     kasper.interest.splice(2,1)
     res.sendStatus(204);
 });
