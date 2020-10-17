@@ -12,24 +12,24 @@ class user{ // class user
 }
 // class paymentUser with inheritance from class user
 class paymentUser extends user{
-    constructor(firstName,lastName,age,gender,interest,match, image,creditCard) {
+    constructor(firstName,lastName,age,gender,interest,match, image) {
         super(firstName,lastName,age,gender,interest,match, image)
-        this.creditCard = creditCard;
+        this.creditCard = true;
     }
 }
 
 // class freeUser with inheritance from class user
 class freeUser extends user{
-    constructor(firstName,lastName,age,gender,interest,match,image, creditCard) {
+    constructor(firstName,lastName,age,gender,interest,match,image) {
         super(firstName,lastName,age,gender,interest,match,image)
-        this.creditCard = creditCard;
+        this.creditCard = false;
     }
 }
 
 // the users
-var kasper = new paymentUser("Kasper","Jakobsen","21","male",["Gaming","Food","Scout"],22, true,true);
-var eva = new freeUser("Eva","Hansen","20","female", ["Communism","Fishing","Diving"],3,true,false);
-var users = [kasper]; // user eva can be added to this with a http post later on
+var kasper = new paymentUser("Kasper","Jakobsen","21","male",["Gaming","Food","Scout"],22, true);
+var eva = new freeUser("Eva","Hansen","20","female", ["Communism","Fishing","Diving"],3,true);
+var allUsers = [kasper]; // user eva can be added to this with a http post later on
 
 // everything under this line is the server stuff
 var express = require("express");
@@ -55,12 +55,12 @@ app.get('/jwt',(req,res) => {
 //User-endpoint
 // read
 app.get('/user', (req,res) => {
-    res.status(200).json(users)
+    res.status(200).json(allUsers)
 });
 
 // create
 app.post('/user', (req,res) => {
-    users.push(eva);
+    allUsers.push(eva);
     res.status(201).json(eva);
 });
 
@@ -73,7 +73,7 @@ app.put('/user', (req,res) => {
 
 // delete
 app.delete('/user',isAuthorized,(req,res) => {
-    users.splice(1,1);
+    allUsers.splice(1,1);
     res.status(204).json(eva);
 });
 
